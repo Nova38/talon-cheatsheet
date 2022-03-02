@@ -2,6 +2,7 @@ from talon import Module, actions, registry
 from typing import *
 from user.cheatsheet.doc.html import HtmlDoc
 from user.cheatsheet.doc.tex import TeXDoc
+from user.cheatsheet.doc.xml import XmlDoc
 
 import os
 import re
@@ -41,12 +42,26 @@ class CheatSheetActions:
                 title="Talon Cheatsheet",
                 preamble_path="preamble.tex",
             )
+        if format.lower() == "xml":
+            doc = XmlDoc(
+                file_path=os.path.join(this_dir, "cheatsheet.xml"),
+                title="Talon Cheatsheet",
+            )
 
         with doc:
-            with doc.section(cols=2, css_classes="talon-lists") as sec:
-                sec.list(
-                    list_name="user.key_symbol",
-                )
+            # with doc.section(cols=2, css_classes="talon-lists") as sec:
+            #     sec.list(
+            #         list_name="user.key_symbol",
+            #     )
+            with doc.section(cols=3, css_classes="talon-lists") as sec:
+                sec.list("user.letter")
+                sec.list("user.number_key")
+                sec.list("user.modifier_key")
+                sec.list("user.special_key")
+                sec.list("user.symbol_key")
+                sec.list("user.arrow_key")
+                sec.list("user.punctuation")
+                sec.list("user.function_key")
             with doc.section(cols=2, css_classes="talon-formatters") as sec:
                 sec.formatters(
                     list_names=(

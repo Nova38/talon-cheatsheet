@@ -9,7 +9,7 @@ import re
 # Abstract classes for printing cheatsheet document
 
 class Row(AbstractContextManager):
-    def cell(self, contents: str, **kwargs):
+    def cell(self, contents: str, type:str **kwargs):
         """
         Writes a cell to the row.
         """
@@ -29,6 +29,9 @@ class Section(AbstractContextManager):
     def list(self, list_name: str, **kwargs) -> None:
         """
         Create a table for a Talon list.
+        """
+        """
+        Create a table for a Talon list.
 
         Args:
             list_name: The name of the list.
@@ -41,10 +44,13 @@ class Section(AbstractContextManager):
         with self.table(cols=2, **kwargs) as table:
             for key, value in registry.lists[list_name][0].items():
                 with table.row(**kwargs) as row:
-                    row.cell(key, **kwargs)
-                    row.cell(value, **kwargs)
+                    # kwargs["type"] = 'spoken'
+                    row.cell(key, type='spoken', **kwargs)
+                    row.cell(value, type='action',**kwargs)
 
     def formatters(self, **kwargs) -> None:
+        """
+        """
         """
         Create table for the talon formatters list.
 
@@ -67,8 +73,9 @@ class Section(AbstractContextManager):
                     for key, val in items.items():
                         with table.row(**kwargs) as row:
                             example = formatted_text(f"example of formatting with {key}", val)
-                            row.cell(key, **kwargs)
-                            row.cell(example, **kwargs)
+                            # kwargs["type"] = 'spoken'
+                            row.cell(key, type="spoken",**kwargs)
+                            row.cell(example,type="action" **kwargs)
 
     def context(self, context: Context, **kwargs) -> None:
         """
@@ -90,13 +97,15 @@ class Section(AbstractContextManager):
             with self.table(cols=2, **kwargs) as table:
                 for command in context.commands.values():
                     with table.row(**kwargs) as row:
-                        row.cell(Describe.command_rule(command), non_breaking=True, **kwargs)
+                        # kwargs["type"] = 'spoken'
+                        row.cell(Describe.command_rule(command), non_breaking=True, type='spoken', **kwargs)
                         docs = Describe.command(command)
                         impl = Describe.command_impl(command)
+                        # kwargs["type"] = 'action'
                         if docs is not None:
-                            row.cell(docs, **kwargs)
+                            row.cell(docs, type='spoken', **kwargs)
                         else:
-                            row.cell(impl, css_classes='talon-script', **kwargs)
+                            row.cell(impl, css_classes='talon-script',  type='spoken',**kwargs)
         else:
             pass
 

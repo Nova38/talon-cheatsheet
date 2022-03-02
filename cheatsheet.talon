@@ -6,3 +6,6 @@ print developer help:
 
 print latex help:
   user.print_cheatsheet('TeX')
+
+print xml help:
+  user.print_cheatsheet('XML')

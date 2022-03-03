@@ -21,11 +21,9 @@ def attr_class(kwargs) -> str:
         css_classes = [css_classes]
     elif isinstance(css_classes, Iterable):
         css_classes = list(css_classes)
-    if "cols" in kwargs:
-        css_classes.append(f"columns-{kwargs['cols']}")
     if css_classes:
         css_classes = " ".join(css_classes)
-        css_classes = f' class="{css_classes}"'
+        css_classes = f'{css_classes}'
         return css_classes
     else:
         return ""
@@ -44,11 +42,11 @@ class XmlItem(Row):
         self.kwargs = kwargs
 
     def __enter__(self) -> XmlItem:
-        self.file.write(f"<item>\n")
+        self.file.write(f"<command>\n")
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        self.file.write(f"</item>\n")
+        self.file.write(f"</command>\n")
 
     def cell(self, contents: str, type:str, **kwargs):
         self.file.write(f"<{xml_escape(type)}>{xml_escape(contents)}</{xml_escape(type)}>\n")
@@ -60,19 +58,22 @@ class XmlList(Table):
         self.kwargs = kwargs
 
     def __enter__(self) -> XmlList:
-        self.file.write(f"<item>\n")
+        # self.file.write(f"<table>\n")
 
         if "title" in self.kwargs:
             self.file.write(
-                f"<Title>{xml_escape(self.kwargs['title'])}</Title>\n"
+                f"<table title='{xml_escape(self.kwargs['title'])}' >\n"
             )
+        else:
+            self.file.write(f"<table>\n")
 
-        self.file.write(f"<list>\n")
+
+        # self.file.write(f"<list>\n")
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        self.file.write(f"</list>")
-        self.file.write(f"</item>")
+        # self.file.write(f"</list>")
+        self.file.write(f"</table>")
         # self.file.write(f"</div>")
 
     def row(self, **kwargs) -> XmlItem:
@@ -85,9 +86,9 @@ class XmlSection(Section):
         self.kwargs = kwargs
 
     def __enter__(self) -> XmlSection:
-        if "title" in self.kwargs:
-            self.file.write(f"<h1>{xml_escape(self.kwargs['title'])}</h1>\n")
-        self.file.write(f"<section{attr_class(self.kwargs)}>\n")
+        # if "title" in self.kwargs:
+        #     self.file.write(f"<h1>{xml_escape(self.kwargs['title'])}</h1>\n")
+        self.file.write(f"<section name='{attr_class(self.kwargs)}'>\n")
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
@@ -104,7 +105,7 @@ class XmlDoc(Doc):
         self.kwargs = kwargs
 
     def __enter__(self) -> XmlDoc:
-        # self.file.write(f"<!doctype xml>\n")
+        self.file.write(f'<?xml version="1.0" encoding="UTF-8"?>\n')
         # self.file.write(f'<xml lang="en">\n')
         # self.file.write(f"<head>\n")
         # self.file.write(f'<meta charset="utf-8">\n')

@@ -9,3 +9,9 @@ print latex help:
 
 print xml help:
   user.print_cheatsheet('XML')
+
+print json help:
+  user.print_cheatsheet('Json')
+
+print tsv help:
+  user.print_cheatsheet('tsv')

@@ -3,6 +3,8 @@ from typing import *
 from user.cheatsheet.doc.html import HtmlDoc
 from user.cheatsheet.doc.tex import TeXDoc
 from user.cheatsheet.doc.xml import XmlDoc
+from user.cheatsheet.doc.json import JsonDoc
+from user.cheatsheet.doc.tsv import TsvDoc
 
 import os
 import re
@@ -47,6 +49,19 @@ class CheatSheetActions:
                 file_path=os.path.join(this_dir, "cheatsheet.xml"),
                 title="Talon Cheatsheet",
             )
+
+        if format.lower() == "json":
+            doc = JsonDoc(
+                file_path=os.path.join(this_dir, "cheatsheet.json"),
+                title="Talon Cheatsheet",
+            )   
+
+        if format.lower() == "tsv":
+            doc = TsvDoc(
+                dir_path=os.path.join(this_dir, "tsv_dir"),
+                file_path=os.path.join(this_dir, "tsv_list.tex"),
+                title="Talon Cheatsheet",
+            )   
 
         with doc:
             # with doc.section(cols=2, css_classes="talon-lists") as sec:

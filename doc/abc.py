@@ -103,9 +103,9 @@ class Section(AbstractContextManager):
                         impl = Describe.command_impl(command)
                         # kwargs["type"] = 'action'
                         if docs is not None:
-                            row.cell(docs, type='spoken', **kwargs)
+                            row.cell(docs, type='action', **kwargs)
                         else:
-                            row.cell(impl, css_classes='talon-script',  type='spoken',**kwargs)
+                            row.cell(impl, css_classes='talon-script',  type='action',**kwargs)
         else:
             pass
 

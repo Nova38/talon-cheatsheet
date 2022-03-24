@@ -1,4 +1,5 @@
 from __future__ import annotations
+from genericpath import exists
 from io import TextIOWrapper
 from typing import *
 from collections.abc import Iterable
@@ -6,45 +7,48 @@ from user.cheatsheet.doc.abc import *
 import pathlib
 import os
 
-def tex_escape(text: str) -> str:
+import pprint
+
+
+_latex_special_chars = {
+    '{': r'\{',
+    '}': r'\}',
+    '\\': r'\textbackslash{}',
+    '&': r'\&',
+    '%': r'\%',
+    '$': r'\$',
+    '#': r'\#',
+    '_': r'\_',
+    '~': r'\textasciitilde{}',
+    '^': r'\^{}',
+    '\n': '\\newline%\n',
+    '-': r'{-}',
+    '\xA0': '~',  # Non-breaking space
+    '[': r'{[}',
+    ']': r'{]}',
+    '<': r'$<$',
+    '>': r'$>$',
+
+}
+
+
+def latex_escape(text: str) -> str:
     """
     Escape the text so that it can be used in a LaTeX document.
     @param text - the text to be escaped           
     @return the escaped text
     """
-    text = text.replace("{", "\\{")
-    text = text.replace("}", "\\}")
-    text = re.sub(r"\\(?![{}])", "{\\\\textbackslash}", text)
-    text = text.replace("&", "\\&")
-    text = text.replace("%", "\\%")
-    text = text.replace("$", "\\$")
-    text = text.replace("#", "\\#")
-    text = text.replace("_", "\\_{\\allowbreak}")
-    text = text.replace("[", "{[}")
-    text = text.replace("]", "{]}")
-    text = text.replace('"', "{\\\"}")
-    text = text.replace("'", "{\\textquotesingle}")
-    text = text.replace("|", "{\\textbar}")
-    text = text.replace("<", "{\\textlangle}")
-    text = text.replace(">", "{\\textrangle}")
-    text = text.replace("~", "{\\textasciitilde}")
-    text = text.replace("^", "{\\textasciicircum}")
-    text = text.replace("£", "{\\textsterling}")
-    text = text.replace("€", "{\\texteuro}")
-    text = text.replace("–", "{\\textendash}")
-    text = text.replace("—", "{\\textemdash}")
-    text = text.replace(".", ".{\\allowbreak}")
-    text = re.sub(r'\\n+', "\n\\\\newline%\n", text)
+    for key,value in  _latex_special_chars.items():
+        text = text.replace(key, value)
+
+
     return text
 
+def file_name_escape(text: str) -> str:
+    return ((text))
 
 def tsv_escape(text: str) -> str:
-    return ((text)
-        # text.replace("&", "&amp;")
-        # .replace("<", "&lt;")
-        # .replace(">", "&gt;")
-        # .replace("\n", "\n<br />\n")
-    )
+    return (latex_escape(text))
 
 
 def attr_class(kwargs) -> str:
@@ -72,7 +76,7 @@ class TsvItem(Row):
     def __init__(self, file: TextIOWrapper, **kwargs):
         self.file = file
         self.kwargs = kwargs
-
+        
     def __enter__(self) -> TsvItem:
         self.file.write(f"")
         return self
@@ -81,7 +85,7 @@ class TsvItem(Row):
         self.file.write(f"\n")
 
     def cell(self, contents: str, type:str, **kwargs):
-        self.file.write(f"{tex_escape(contents)}\t")
+        self.file.write(f"{{ {tsv_escape(contents)} }}\t")
 
 
 class TsvList(Table):
@@ -89,13 +93,13 @@ class TsvList(Table):
         self.kwargs = kwargs
         self.section = section
         self.list_file = file
-        self.file_path = sec_dir / (tsv_escape(self.kwargs['title']) + ".tsv")
+        self.file_path = sec_dir / (file_name_escape(self.kwargs['title']) + ".tsv")
         self.file =  open(self.file_path, "w")
 
     def __enter__(self) -> TsvList:
         # self.file.write(f"<table>\n")
         self.list_file.write(f"\processseparatedfile[MyTable][tsv_dir/{self.section}/{tsv_escape(self.kwargs['title'])}.tsv]\n\n")
-        self.file.write(f"Col_1\tCol_2\n")
+        self.file.write(f"Command\tResult\n")
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
@@ -107,8 +111,6 @@ class TsvList(Table):
         with open(self.file_path, "w") as f:
             for line in tmp_lines:
                 f.write(f"{line}\n")
-
-        # self.file.write(f"</div>")
 
     def row(self, **kwargs) -> TsvItem:
         return TsvItem(self.file, **kwargs)

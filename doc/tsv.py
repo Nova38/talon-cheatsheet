@@ -11,9 +11,13 @@ import pprint
 
 
 _latex_special_chars = {
+        '\\': r'\textbackslash',
+
     '{': r'\{',
     '}': r'\}',
-    '\\': r'\textbackslash{}',
+    '[': r'{[}',
+    ']': r'{]}',
+
     '&': r'\&',
     '%': r'\%',
     '$': r'\$',
@@ -24,8 +28,7 @@ _latex_special_chars = {
     '\n': '\\newline%\n',
     '-': r'{-}',
     '\xA0': '~',  # Non-breaking space
-    '[': r'{[}',
-    ']': r'{]}',
+
     '<': r'$<$',
     '>': r'$>$',
 
@@ -85,6 +88,7 @@ class TsvItem(Row):
         self.file.write(f"\n")
 
     def cell(self, contents: str, type:str, **kwargs):
+        # print(contents)
         self.file.write(f"{{ {tsv_escape(contents)} }}\t")
 
 
@@ -98,7 +102,13 @@ class TsvList(Table):
 
     def __enter__(self) -> TsvList:
         # self.file.write(f"<table>\n")
-        self.list_file.write(f"\processseparatedfile[MyTable][tsv_dir/{self.section}/{tsv_escape(self.kwargs['title'])}.tsv]\n\n")
+        # \posterbox[adjusted title={fname},colbacktitle=TitleBGColor, colback=BGColor]
+        # {name={fname},column=,below=}
+        # {
+        #     \pgfplotstabletypeset[col sep=tab]{[tsv_dir/{self.section}/{fname}.tsv]}
+        # }
+        fname = file_name_escape(self.kwargs['title'])
+        #self.list_file.write(f"\posterbox[adjusted title={fname},colbacktitle=TitleBGColor, colback=BGColor]\n{{name={fname},column=,below=}}\n{{\n \pgfplotstabletypeset[col sep=tab]{{{fname}.tsv}}\n}}\n\n")
         self.file.write(f"Command\tResult\n")
         return self
 

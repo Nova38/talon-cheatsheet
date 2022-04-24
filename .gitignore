@@ -12,3 +12,5 @@ cheatsheet.tex
 /dist/
 /.parcel-cache/
 /node_modules/
+
+tsv_dir/

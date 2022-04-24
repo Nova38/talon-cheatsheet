@@ -12,7 +12,23 @@ import sys
 
 mod = Module()
 
-
+list_to_include = [
+                    "user.letter",
+                    "user.number_key",
+                    "user.modifier_key",
+                    "user.special_key",
+                    "user.symbol_key",
+                    "user.arrow_key",
+                    "user.punctuation",
+                    "user.function_key",
+                    "user.abbreviation",
+                    "user.window_snap_positions",
+                    "user.cursorless_simple_action",  
+                    "user.cursorless_callback_action",
+                    "user.cursorless_makeshift_action",
+                    "user.cursorless_scope_type",
+                    "user.cursorless_hat_color",
+                ]
 @mod.action_class
 class CheatSheetActions:
     def print_cheatsheet(format: str):
@@ -69,14 +85,9 @@ class CheatSheetActions:
             #         list_name="user.key_symbol",
             #     )
             with doc.section(cols=3, css_classes="talon-lists") as sec:
-                sec.list("user.letter")
-                sec.list("user.number_key")
-                sec.list("user.modifier_key")
-                sec.list("user.special_key")
-                sec.list("user.symbol_key")
-                sec.list("user.arrow_key")
-                sec.list("user.punctuation")
-                sec.list("user.function_key")
+                for list_name in list_to_include:
+                    sec.list(list_name)
+
             with doc.section(cols=2, css_classes="talon-formatters") as sec:
                 sec.formatters(
                     list_names=(

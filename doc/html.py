@@ -4,14 +4,15 @@ from typing import *
 from collections.abc import Iterable
 from user.cheatsheet.doc.abc import *
 import os
+import re
 
 
 def html_escape(text: str) -> str:
     return (
-        text.replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace("\n", "\n<br />\n")
+        re.sub(r"<user.([-\w]+)>", r"&ltuser.\1&gt", text.replace(r"<phrase>", r"&ltphrase&gt")
+        .replace(r"<number>", r"&ltnumber&gt")
+        .replace(r"<number_small>", r"&ltnumber_small&gt")
+        .replace("\n", "\n<br />\n"))
     )
 
 
@@ -34,6 +35,16 @@ def attr_class(kwargs) -> str:
 def attr_colspan(kwargs) -> str:
     if "cols" in kwargs:
         return f" colspan=\"{kwargs['cols']}\""
+    else:
+        return ""
+
+def attr_id(kwargs)->str:
+    if "title" in kwargs:
+        id = kwargs['title']
+        print(id)
+        id=re.sub(r'[\(\)_,.?!\t\n ]+', '-', id)
+        print(id)
+        return f" id=\"{id}\""
     else:
         return ""
 
@@ -67,7 +78,7 @@ class HtmlTable(Table):
             self.file.write(f"<thead>")
             self.file.write(f"<tr>")
             self.file.write(
-                f"<th{attr_colspan(self.kwargs)}>{html_escape(self.kwargs['title'])}</th>"
+                f"<th{attr_colspan(self.kwargs)}{attr_id(self.kwargs)}>{html_escape(self.kwargs['title'])}</th>"
             )
             self.file.write(f"</tr>")
             self.file.write(f"</thead>")

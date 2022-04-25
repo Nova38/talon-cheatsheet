@@ -61,7 +61,40 @@ class Describe(TalonScriptWalker):
 
     @staticmethod
     def command_rule(command: CommandImpl) -> str:
-        return re.sub(Describe.RuleRegexDel, "", command.rule.rule)
+        #return re.sub(Describe.RuleRegexDel, "", command.rule.rule)
+        capture_pattern = command.rule.rule
+        #if re.search(r'{user.([^}^\s]+)}', capture_pattern):
+        #    print(capture_pattern)
+        #    temp = capture_pattern.split('_')
+        #    capture_pattern = '-'.join(temp)
+        #    capture_pattern = re.sub(r'{user.([^}^\s]+)}', r'<a href="#user-\1-list"> {user.\1} </a>', capture_pattern)
+        
+        if re.search(r'<(?!user|self)([^>^\s]+)>', capture_pattern):
+            capture_pattern = re.sub(r'<(?!user|self)([^>^\s]+)>', r' &lt;\1&gt;  ', capture_pattern)
+                    
+        if re.search(r'<user.([^>^\s]+)>', capture_pattern):
+            print(capture_pattern)
+            capture_pattern = re.sub(r'<user.([^>]+)>', r' <a href="#user-\1_capture"> &lt;user.\1&gt; </a> ', capture_pattern)
+            print(capture_pattern)
+            
+        if re.search(r'<self.([^>^\s]+)>', capture_pattern):
+            print(capture_pattern)
+            capture_pattern = re.sub(r'<self.([^>]+)>', r' <a href="#user-\1_capture"> &lt;self.\1&gt; </a> ', capture_pattern)
+            print(capture_pattern)
+        
+        if re.search(r'\{user.([^}^\s]+)\}', capture_pattern):
+            print(capture_pattern)
+            capture_pattern = re.sub(r'\{user.([^}^\s]+)\}', r'<a href="#user-\1_list">  {user.\1}  </a>', capture_pattern)
+            print(capture_pattern)
+        
+        if re.search(r'\{self.([^}^\s]+)\}', capture_pattern):
+            print(capture_pattern)
+            capture_pattern = re.sub(r'\{self.([^}^\s]+)\}', r'<a href="#user-\1_list">  {self.\1}  </a>', capture_pattern)
+            print(capture_pattern)
+        
+        final_string = capture_pattern.replace("_", "-") ## this replacement makes the links work but also replaces the underscores in the display name, making them incorrect.
+
+        return final_string
 
     # Describing actions
 

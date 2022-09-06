@@ -1,5 +1,6 @@
 from talon import Module, actions, registry
 from typing import *
+from user.cheatsheet.doc.dict import DictDoc
 from user.cheatsheet.doc.html import HtmlDoc
 from user.cheatsheet.doc.tex import TeXDoc
 from user.cheatsheet.doc.xml import XmlDoc
@@ -69,6 +70,11 @@ class CheatSheetActions:
         if format.lower() == "json":
             doc = JsonDoc(
                 file_path=os.path.join(this_dir, "cheatsheet.json"),
+                title="Talon Cheatsheet",
+            )   
+        if format.lower() == "dict":
+            doc = DictDoc(
+                file_path=os.path.join(this_dir, "cheatsheet.dict.json"),
                 title="Talon Cheatsheet",
             )   
 

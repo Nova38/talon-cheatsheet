@@ -15,3 +15,6 @@ print json help:
 
 print tsv help:
   user.print_cheatsheet('tsv')
+
+print dict help:
+  user.print_cheatsheet('dict')
